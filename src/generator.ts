@@ -1,17 +1,14 @@
 import { SvgElement } from "./types";
 import { Options } from "./index";
 
-const nonEditableProperties = [
-  "viewBox",
-  "preserveAspectRatio",
-] as const;
+const nonEditableProperties = ["viewBox", "preserveAspectRatio"] as const;
 
 /**
  * Generates a Svelte component from a parsed SVG element
  */
 export function generateSvelteComponent(
   svg: SvgElement,
-  options: Options = {}
+  options: Options = {},
 ): string {
   const svgProps = getSvgProps(svg, options);
 
@@ -64,7 +61,10 @@ function buildPropsSection(svgProps: Record<string, string>): string {
   return `  let {\n${propDefaults.join(",\n")}\n  } = $props();`;
 }
 
-function getSvgProps(svg: SvgElement, options: Options): Record<string, string> {
+function getSvgProps(
+  svg: SvgElement,
+  options: Options,
+): Record<string, string> {
   const svgProps: Record<string, string> = {};
 
   for (const [key, value] of Object.entries(svg)) {
@@ -72,10 +72,18 @@ function getSvgProps(svg: SvgElement, options: Options): Record<string, string> 
       continue;
     }
 
-    function setAriaAttribute(attr: string, value: string | SvgElement | SvgElement[]) {
+    function setAriaAttribute(
+      attr: string,
+      value: string | SvgElement | SvgElement[],
+    ) {
       if (typeof value === "string" && value.trim() !== "") {
         svgProps[attr] = value.trim();
-      } else if (typeof value === "object" && value !== null && "#text" in value && typeof value["#text"] === "string") {
+      } else if (
+        typeof value === "object" &&
+        value !== null &&
+        "#text" in value &&
+        typeof value["#text"] === "string"
+      ) {
         svgProps[attr] = value["#text"];
       }
     }
@@ -118,7 +126,6 @@ function buildSvgAttributes(svgProps: Record<string, string>): string {
       attributes.push("class={className}");
       continue;
     }
-
 
     const varName = /^[a-z][a-zA-Z0-9]*$/.test(key) ? key : kebabToCamel(key);
     attributes.push(key.includes("-") ? `${key}={${varName}}` : `{${varName}}`);

@@ -13,11 +13,17 @@ export function runCli(args: string[]): CliResult {
   let stdout = "";
   let stderr = "";
 
-  const log = (msg: string) => { stdout += msg + "\n"; };
-  const error = (msg: string) => { stderr += msg + "\n"; };
+  const log = (msg: string) => {
+    stdout += msg + "\n";
+  };
+  const error = (msg: string) => {
+    stderr += msg + "\n";
+  };
 
   if (args.length < 1) {
-    error("Usage: svg-to-svelte <input-dir-or-svg-file> [output-dir] [--include-class]");
+    error(
+      "Usage: svg-to-svelte <input-dir-or-svg-file> [output-dir] [--include-class]",
+    );
     return { exitCode: 1, stdout, stderr };
   }
 
@@ -54,7 +60,7 @@ export function runCli(args: string[]): CliResult {
       return { exitCode: 1, stdout, stderr };
     }
   } else if (stats.isDirectory()) {
-    const files = fs.readdirSync(input).filter(f => f.endsWith(".svg"));
+    const files = fs.readdirSync(input).filter((f) => f.endsWith(".svg"));
     if (files.length === 0) {
       error(`Error: No .svg files found in ${input}`);
       return { exitCode: 1, stdout, stderr };
@@ -62,7 +68,8 @@ export function runCli(args: string[]): CliResult {
 
     log(`Found ${files.length} SVG file(s)`);
 
-    let successCount = 0, errorCount = 0;
+    let successCount = 0,
+      errorCount = 0;
     for (const file of files) {
       const inputPath = path.join(input, file);
       try {
@@ -87,7 +94,7 @@ function processSvgFile(
   inputPath: string,
   outputDir: string,
   log: (msg: string) => void,
-  options: Options
+  options: Options,
 ) {
   const svelteFileName = getSvelteFileName(inputPath);
   const outputPath = path.join(outputDir, svelteFileName);
@@ -119,18 +126,19 @@ export function getSvelteFileName(inputPath: string): string {
  * - "iconName" → "IconName"
  */
 export function toPascalCase(name: string): string {
-  return name
-    // replace separators with spaces
-    .replace(/[-_]/g, " ")
-    // add space before uppercase letters (camelCase support)
-    .replace(/([a-z])([A-Z])/g, "$1 $2")
-    // split by spaces, capitalize and join
-    .split(/\s+/)
-    .filter(Boolean)
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-    .join("");
+  return (
+    name
+      // replace separators with spaces
+      .replace(/[-_]/g, " ")
+      // add space before uppercase letters (camelCase support)
+      .replace(/([a-z])([A-Z])/g, "$1 $2")
+      // split by spaces, capitalize and join
+      .split(/\s+/)
+      .filter(Boolean)
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join("")
+  );
 }
-
 
 // Only run main when executed directly (not when imported)
 if (require.main === module) {

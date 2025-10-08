@@ -31,7 +31,6 @@ describe("generateSvelteComponent", () => {
     expect(result.split(/\r?\n/)).toEqual(svelteComponent.split(/\r?\n/));
   });
 
-
   it("should handle svg with <title> element and add aria-label", () => {
     const svg: SvgElement = {
       title: "Home Icon",
@@ -43,10 +42,10 @@ describe("generateSvelteComponent", () => {
     expect(result).toContain('"aria-label": ariaLabel = "Home Icon"');
 
     // Should use aria-label in svg attributes
-    expect(result).toContain('aria-label={ariaLabel}');
+    expect(result).toContain("aria-label={ariaLabel}");
 
     // Should not include title in the props section
-    expect(result).not.toContain('title');
+    expect(result).not.toContain("title");
   });
 
   it("should handle svg with <desc> element and add aria-description", () => {
@@ -57,13 +56,15 @@ describe("generateSvelteComponent", () => {
     const result = generateSvelteComponent(svg);
 
     // Should include aria-description prop
-    expect(result).toContain('"aria-description": ariaDescription = "A simple home icon with a roof and door"');
+    expect(result).toContain(
+      '"aria-description": ariaDescription = "A simple home icon with a roof and door"',
+    );
 
     // Should use aria-description in svg attributes
-    expect(result).toContain('aria-description={ariaDescription}');
+    expect(result).toContain("aria-description={ariaDescription}");
 
     // Should not include desc in the props section
-    expect(result).not.toContain('desc =');
+    expect(result).not.toContain("desc =");
   });
 
   it("should handle svg with both <title> and <desc> elements", () => {
@@ -76,11 +77,13 @@ describe("generateSvelteComponent", () => {
 
     // Should include both aria-label and aria-description
     expect(result).toContain('"aria-label": ariaLabel = "Home Icon"');
-    expect(result).toContain('"aria-description": ariaDescription = "A simple home icon with a roof and door"');
+    expect(result).toContain(
+      '"aria-description": ariaDescription = "A simple home icon with a roof and door"',
+    );
 
     // Should use both in svg attributes
-    expect(result).toContain('aria-label={ariaLabel}');
-    expect(result).toContain('aria-description={ariaDescription}');
+    expect(result).toContain("aria-label={ariaLabel}");
+    expect(result).toContain("aria-description={ariaDescription}");
   });
 
   it("should remove empty string attributes", () => {
@@ -92,9 +95,9 @@ describe("generateSvelteComponent", () => {
     const result = generateSvelteComponent(svg);
 
     // Should not include fill prop since it's empty
-    expect(result).not.toContain('fill =');
-    expect(result).not.toContain('fill={fill}');
-    expect(result).not.toContain('{fill}');
+    expect(result).not.toContain("fill =");
+    expect(result).not.toContain("fill={fill}");
+    expect(result).not.toContain("{fill}");
 
     // Should include stroke prop
     expect(result).toContain('stroke = "currentColor"');
@@ -110,9 +113,9 @@ describe("generateSvelteComponent", () => {
     const result = generateSvelteComponent(svg);
 
     // Should not include fill or stroke-width props since they're whitespace-only
-    expect(result).not.toContain('fill =');
-    expect(result).not.toContain('strokeWidth =');
-    expect(result).not.toContain('stroke-width');
+    expect(result).not.toContain("fill =");
+    expect(result).not.toContain("strokeWidth =");
+    expect(result).not.toContain("stroke-width");
 
     // Should include stroke prop
     expect(result).toContain('stroke = "currentColor"');
@@ -128,7 +131,9 @@ describe("generateSvelteComponent", () => {
 
     // Should trim whitespace in aria-label and aria-description
     expect(result).toContain('"aria-label": ariaLabel = "Home Icon"');
-    expect(result).toContain('"aria-description": ariaDescription = "A simple home icon"');
+    expect(result).toContain(
+      '"aria-description": ariaDescription = "A simple home icon"',
+    );
   });
 
   it("should not add aria-label if title is empty or whitespace-only", () => {
@@ -139,8 +144,8 @@ describe("generateSvelteComponent", () => {
     const result = generateSvelteComponent(svg);
 
     // Should not include aria-label
-    expect(result).not.toContain('aria-label');
-    expect(result).not.toContain('ariaLabel');
+    expect(result).not.toContain("aria-label");
+    expect(result).not.toContain("ariaLabel");
   });
 
   it("should not add aria-description if desc is empty or whitespace-only", () => {
@@ -151,33 +156,33 @@ describe("generateSvelteComponent", () => {
     const result = generateSvelteComponent(svg);
 
     // Should not include aria-description
-    expect(result).not.toContain('aria-description');
-    expect(result).not.toContain('ariaDescription');
+    expect(result).not.toContain("aria-description");
+    expect(result).not.toContain("ariaDescription");
   });
 
   it("should work with groups", () => {
     const svg: SvgElement = {
       g: {
         rect: {
-          x: "10"
-        }
-      }
+          x: "10",
+        },
+      },
     };
 
     const result = generateSvelteComponent(svg);
     const expected = `<g>
     <rect x="10" />
-  </g>`
-    expect(result).toContain(expected)
+  </g>`;
+    expect(result).toContain(expected);
   });
 
   it("should include class if configured", () => {
     const svg: SvgElement = {
       class: "size-6",
-    }
+    };
 
-    const result = generateSvelteComponent(svg, {includeClass: true});
-    expect(result).toContain('class: className = "size-6"')
-    expect(result).toContain("class={className}")
+    const result = generateSvelteComponent(svg, { includeClass: true });
+    expect(result).toContain('class: className = "size-6"');
+    expect(result).toContain("class={className}");
   });
 });

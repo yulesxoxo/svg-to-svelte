@@ -11,10 +11,10 @@ describe("CLI", () => {
   // Helper to run CLI command via npx (for integration tests)
   const runCliIntegration = (args: string[]) => {
     try {
-      const result = execSync(
-        `npx tsx ${cliPath} ${args.join(" ")}`,
-        { encoding: "utf8", stdio: "pipe" }
-      );
+      const result = execSync(`npx tsx ${cliPath} ${args.join(" ")}`, {
+        encoding: "utf8",
+        stdio: "pipe",
+      });
       return { stdout: result, stderr: "", exitCode: 0 };
     } catch (error: any) {
       return {
@@ -75,7 +75,7 @@ describe("CLI", () => {
       // Verify content matches expected
       const expectedPath = path.resolve(
         __dirname,
-        "data/feather/Activity.svelte"
+        "data/feather/Activity.svelte",
       );
       const output = fs.readFileSync(outputPath, "utf8");
       const expected = fs.readFileSync(expectedPath, "utf8");
@@ -91,10 +91,7 @@ describe("CLI", () => {
       const outputPath = path.join(testOutputDir, "square.svelte");
       expect(fs.existsSync(outputPath)).toBe(true);
 
-      const expectedPath = path.resolve(
-        __dirname,
-        "data/custom/Square.svelte"
-      );
+      const expectedPath = path.resolve(__dirname, "data/custom/Square.svelte");
       const output = fs.readFileSync(outputPath, "utf8");
       const expected = fs.readFileSync(expectedPath, "utf8");
       expect(output.split(/\r?\n/)).toEqual(expected.split(/\r?\n/));
@@ -120,7 +117,7 @@ describe("CLI", () => {
       expect(result.exitCode).toBe(0);
       expect(fs.existsSync(newOutputDir)).toBe(true);
       expect(fs.existsSync(path.join(newOutputDir, "activity.svelte"))).toBe(
-        true
+        true,
       );
     });
   });
@@ -203,7 +200,7 @@ describe("CLI", () => {
         const outputPath = path.join(testOutputDir, outputFile);
         const expectedPath = path.resolve(
           __dirname,
-          `data/feather/${expectedFile}`
+          `data/feather/${expectedFile}`,
         );
 
         const output = fs.readFileSync(outputPath, "utf8");
@@ -228,7 +225,7 @@ describe("CLI", () => {
         const outputPath = path.join(testOutputDir, outputFile);
         const expectedPath = path.resolve(
           __dirname,
-          `data/custom/${expectedFile}`
+          `data/custom/${expectedFile}`,
         );
 
         const output = fs.readFileSync(outputPath, "utf8");
