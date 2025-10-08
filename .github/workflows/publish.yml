@@ -11,8 +11,6 @@ jobs:
       contents: read
       packages: write
       id-token: write
-    env:
-      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
     steps:
       - uses: actions/checkout@v5
 
@@ -30,9 +28,9 @@ jobs:
         with:
           registry-url: 'https://registry.npmjs.org'
 
-      - run: npm whoami
-
       - run: npm publish --provenance --access public
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publish to GitHub Packages
         uses: actions/setup-node@v5
@@ -41,3 +39,5 @@ jobs:
           scope: '@yulesxoxo'
 
       - run: npm publish
+        env:
+          NPM_TOKEN: ${{ secrets.GITHUB_TOKEN }}
