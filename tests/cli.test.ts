@@ -63,7 +63,7 @@ describe("CLI", () => {
       expect(result.stdout).toContain("activity.svg");
 
       // Check output file was created
-      const outputPath = path.join(testOutputDir, "activity.svelte");
+      const outputPath = path.join(testOutputDir, "Activity.svelte");
       expect(fs.existsSync(outputPath)).toBe(true);
 
       // Verify content matches expected
@@ -110,7 +110,7 @@ describe("CLI", () => {
 
       expect(result.exitCode).toBe(0);
       expect(fs.existsSync(newOutputDir)).toBe(true);
-      expect(fs.existsSync(path.join(newOutputDir, "activity.svelte"))).toBe(
+      expect(fs.existsSync(path.join(newOutputDir, "Activity.svelte"))).toBe(
         true,
       );
     });
@@ -238,7 +238,7 @@ describe("CLI", () => {
       expect(result.exitCode).toBe(0);
       expect(result.stdout).toContain("Processing:");
 
-      const outputPath = path.join(testOutputDir, "activity.svelte");
+      const outputPath = path.join(testOutputDir, "Activity.svelte");
       expect(fs.existsSync(outputPath)).toBe(true);
     });
 
