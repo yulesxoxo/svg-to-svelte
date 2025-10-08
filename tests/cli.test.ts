@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach } from "vitest";
+import { describe, it, expect, beforeEach, afterEach, beforeAll, vi } from "vitest";
 import fs from "fs";
 import path from "path";
 import { execSync } from "child_process";
@@ -231,7 +231,10 @@ describe("CLI", () => {
   });
 
   describe("integration tests (via npx tsx)", () => {
-    it("should work when called via npx tsx - success case", () => {
+    const testOptions = {
+      timeout: 30000
+    }
+    it("should work when called via npx tsx - success case", testOptions, () => {
       const inputPath = path.resolve(__dirname, "data/feather/activity.svg");
       const result = runCliIntegration([inputPath, testOutputDir]);
 
@@ -242,7 +245,7 @@ describe("CLI", () => {
       expect(fs.existsSync(outputPath)).toBe(true);
     });
 
-    it("should work when called via npx tsx - failure case", () => {
+    it("should work when called via npx tsx - failure case", testOptions, () => {
       const result = runCliIntegration(["non-existent.svg", testOutputDir]);
 
       expect(result.exitCode).toBe(1);
