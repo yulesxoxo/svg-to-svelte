@@ -170,4 +170,14 @@ describe("generateSvelteComponent", () => {
   </g>`
     expect(result).toContain(expected)
   });
+
+  it("should include class if configured", () => {
+    const svg: SvgElement = {
+      class: "size-6",
+    }
+
+    const result = generateSvelteComponent(svg, {includeClass: true});
+    expect(result).toContain('class: className = "size-6"')
+    expect(result).toContain("{className}")
+  });
 });

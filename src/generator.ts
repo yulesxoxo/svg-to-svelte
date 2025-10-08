@@ -1,16 +1,19 @@
 import { SvgElement } from "./types";
+import { Options } from "./index";
 
 const nonEditableProperties = [
-  "class",
   "viewBox",
   "preserveAspectRatio",
-]
+] as const;
 
 /**
  * Generates a Svelte component from a parsed SVG element
  */
-export function generateSvelteComponent(svg: SvgElement): string {
-  const svgProps = getSvgProps(svg);
+export function generateSvelteComponent(
+  svg: SvgElement,
+  options: Options = {}
+): string {
+  const svgProps = getSvgProps(svg, options);
 
   const propsSection = buildPropsSection(svgProps);
 
@@ -39,9 +42,15 @@ function buildPropsSection(svgProps: Record<string, string>): string {
   const propDefaults: string[] = [];
 
   for (const [key, value] of Object.entries(svgProps)) {
-    if (nonEditableProperties.includes(key)) {
+    if (nonEditableProperties.includes(key as any)) {
       continue;
     }
+
+    if (key === "class") {
+      propDefaults.push(`    class: className = "${value}"`);
+      continue;
+    }
+
     const varName = /^[a-z][a-zA-Z0-9]*$/.test(key) ? key : kebabToCamel(key);
     if (varName !== key) {
       propDefaults.push(`    "${key}": ${varName} = "${value}"`);
@@ -55,11 +64,11 @@ function buildPropsSection(svgProps: Record<string, string>): string {
   return `  let {\n${propDefaults.join(",\n")}\n  } = $props();`;
 }
 
-function getSvgProps(svg: SvgElement): Record<string, string> {
+function getSvgProps(svg: SvgElement, options: Options): Record<string, string> {
   const svgProps: Record<string, string> = {};
 
   for (const [key, value] of Object.entries(svg)) {
-    if (key === "class") {
+    if (key === "class" && !options.includeClass) {
       continue;
     }
 
@@ -96,17 +105,23 @@ function getSvgProps(svg: SvgElement): Record<string, string> {
   return svgProps;
 }
 
-
 function buildSvgAttributes(svgProps: Record<string, string>): string {
   const attributes: string[] = [];
 
   for (const [key, value] of Object.entries(svgProps)) {
-    if (nonEditableProperties.includes(key)) {
+    if (nonEditableProperties.includes(key as any)) {
       attributes.push(`${key}="${value}"`);
-    } else {
-      const varName = /^[a-z][a-zA-Z0-9]*$/.test(key) ? key : kebabToCamel(key);
-      attributes.push(key.includes("-") ? `${key}={${varName}}` : `{${varName}}`);
+      continue;
     }
+
+    if (key === "class") {
+      attributes.push("{className}");
+      continue;
+    }
+
+
+    const varName = /^[a-z][a-zA-Z0-9]*$/.test(key) ? key : kebabToCamel(key);
+    attributes.push(key.includes("-") ? `${key}={${varName}}` : `{${varName}}`);
   }
 
   attributes.push("{...rest}");
