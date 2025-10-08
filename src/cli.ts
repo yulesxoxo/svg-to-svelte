@@ -16,13 +16,20 @@ export function runCli(args: string[]): CliResult {
   const log = (msg: string) => { stdout += msg + "\n"; };
   const error = (msg: string) => { stderr += msg + "\n"; };
 
-  if (args.length < 2) {
-    error("Usage: svg-to-svelte <input-dir-or-svg-file> <output-dir> [--include-class]");
+  if (args.length < 1) {
+    error("Usage: svg-to-svelte <input-dir-or-svg-file> [output-dir] [--include-class]");
     return { exitCode: 1, stdout, stderr };
   }
 
   const input = args[0];
-  const outputDir = args[1];
+  // If output directory is not provided, default to the input's directory
+  let outputDir: string;
+  const outputArg = args[1];
+  if (outputArg && !outputArg.startsWith("--")) {
+    outputDir = outputArg;
+  } else {
+    outputDir = fs.statSync(input).isDirectory() ? input : path.dirname(input);
+  }
 
   const includeClass = args.includes("--include-class");
 
