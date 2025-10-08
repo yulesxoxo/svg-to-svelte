@@ -1,7 +1,10 @@
 #!/usr/bin/env node
 import fs from "fs";
 import path from "path";
-import { Options, svgToSvelte } from "./index";
+import { Options, svgToSvelte } from "./index.js";
+import { fileURLToPath } from 'node:url';
+import { argv } from 'node:process';
+
 
 export interface CliResult {
   exitCode: number;
@@ -141,7 +144,7 @@ export function toPascalCase(name: string): string {
 }
 
 // Only run main when executed directly (not when imported)
-if (require.main === module) {
+if (fileURLToPath(import.meta.url) === argv[1]) {
   const result = runCli(process.argv.slice(2));
 
   if (result.stdout) {

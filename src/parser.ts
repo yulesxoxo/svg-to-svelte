@@ -1,5 +1,5 @@
 import { XMLValidator, XMLParser } from "fast-xml-parser";
-import { SvgElement } from "./types";
+import { SvgElement } from "./types.js";
 
 const parser = new XMLParser({
   ignoreAttributes: false,

@@ -1,5 +1,5 @@
-import { SvgElement } from "./types";
-import { Options } from "./index";
+import { SvgElement } from "./types.js";
+import { Options } from "./index.js";
 
 const nonEditableProperties = ["viewBox", "preserveAspectRatio"] as const;
 

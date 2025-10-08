@@ -1,6 +1,6 @@
-import { preprocessSvg } from "./preprocessor";
-import { parseSvg } from "./parser";
-import { generateSvelteComponent } from "./generator";
+import { preprocessSvg } from "./preprocessor.js";
+import { parseSvg } from "./parser.js";
+import { generateSvelteComponent } from "./generator.js";
 
 export interface Options {
   includeClass?: boolean; // whether to include the class property

@@ -1,6 +1,7 @@
 {
   "name": "@yulesxoxo/svg-to-svelte",
   "version": "0.0.1",
+  "type": "module",
   "description": "Convert SVG files into Svelte 5 components",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
