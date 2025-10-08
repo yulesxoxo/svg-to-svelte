@@ -82,7 +82,7 @@ describe("CLI", () => {
 
       expect(result.exitCode).toBe(0);
 
-      const outputPath = path.join(testOutputDir, "square.svelte");
+      const outputPath = path.join(testOutputDir, "Square.svelte");
       expect(fs.existsSync(outputPath)).toBe(true);
 
       const expectedPath = path.resolve(__dirname, "data/custom/Square.svelte");
@@ -149,7 +149,7 @@ describe("CLI", () => {
 
       expect(result.exitCode).toBe(0);
 
-      const expectedFiles = ["square.svelte", "group.svelte"];
+      const expectedFiles = ["Square.svelte", "Group.svelte"];
 
       expectedFiles.forEach((file) => {
         const outputPath = path.join(testOutputDir, file);
@@ -211,8 +211,8 @@ describe("CLI", () => {
       expect(result.exitCode).toBe(0);
 
       const testFiles = {
-        "square.svelte": "Square.svelte",
-        "group.svelte": "Group.svelte",
+        "Square.svelte": "Square.svelte",
+        "Group.svelte": "Group.svelte",
       };
 
       Object.entries(testFiles).forEach(([outputFile, expectedFile]) => {
