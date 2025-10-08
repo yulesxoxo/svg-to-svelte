@@ -1,38 +1,16 @@
 import { SvgElement } from "./types";
 
-export interface GeneratorOptions {
-  /**
-   * Properties to expose as component props with their default values
-   */
-  props?: {
-    width?: string | number;
-    height?: string | number;
-  };
-}
-
 /**
  * Generates a Svelte component from a parsed SVG element
  */
 export function generateSvelteComponent(
   svg: SvgElement,
-  options: GeneratorOptions = {}
 ): string {
-  const {
-    props = {
-      width: 24,
-      height: 24,
-    },
-  } = options;
+  const svgProps = getSvgProps(svg);
 
-  // Extract values from SVG
-  const svgWidth = svg.width as string | undefined;
-  const svgHeight = svg.height as string | undefined;
+  const propsSection = buildPropsSection(svgProps);
 
-  // Build props section
-  const propsSection = buildPropsSection(props, svgWidth, svgHeight);
-
-  // Build SVG attributes
-  const svgAttributes = buildSvgAttributes(svg, props);
+  const svgAttributes = buildSvgAttributes(svgProps);
 
   // Build child elements
   const children = buildChildren(svg);
@@ -47,71 +25,49 @@ ${children}
 `;
 }
 
-function buildPropsSection(
-  props: NonNullable<GeneratorOptions["props"]>,
-  svgWidth?: string,
-  svgHeight?: string
-): string {
-  const propLines: string[] = [];
+function buildPropsSection(svgProps: Record<string, string>): string {
+  // TODO
+  return ""
+}
 
-  if (props.width !== undefined) {
-    const defaultWidth = svgWidth || props.width;
-    propLines.push(`width = ${defaultWidth}`);
+function getSvgProps(
+    svg: SvgElement,
+): Record<string, string> {
+  const svgProps: Record<string, string> = {};
+
+  for (const [key, value] of Object.entries(svg)) {
+    if (typeof value === 'string') {
+      svgProps[key] = value;
+    }
+
+    if (key === 'title' && typeof value === 'string' && value.trim() !== '') {
+      svgProps['aria-label'] = value.trim();
+    }
+
+    if (key === 'desc' && typeof value === 'string' && value.trim() !== '') {
+      svgProps['aria-description'] = value.trim();
+    }
+
+    for (const [key, value] of Object.entries(svgProps)) {
+      if (value.trim() === '') {
+        delete svgProps[key];
+      }
+    }
   }
 
-  if (props.height !== undefined) {
-    const defaultHeight = svgHeight || props.height;
-    propLines.push(`height = ${defaultHeight}`);
-  }
-
-  propLines.push(`class: className`);
-
-
-  if (propLines.length === 0) {
-    return "";
-  }
-
-  const formattedProps = propLines.join(",\n    ");
-  return `  let { \n    ${formattedProps} \n  } = $props();`;
+  return svgProps
 }
 
 function buildSvgAttributes(
-  svg: SvgElement,
-  props: NonNullable<GeneratorOptions["props"]>
+  svgProps: Record<string, string>
 ): string {
   const attributes: string[] = [];
 
-  for (const [key, value] of Object.entries(svg)) {
-    // Skip child elements (objects and arrays)
-    if (typeof value !== "string") {
-      continue;
-    }
-
-    // Skip width and height if they're exposed as props
-    if (key === "width" && props.width !== undefined) {
-      continue;
-    }
-    if (key === "height" && props.height !== undefined) {
-      continue;
-    }
-
-    if (key === "class") {
-      continue;
-    }
-
-    // Add regular attributes
+  for (const [key, value] of Object.entries(svgProps)) {
     attributes.push(`${key}="${value}"`);
   }
 
-  // Add prop-based attributes
-  if (props.width !== undefined) {
-    attributes.unshift("{width}");
-  }
-  if (props.height !== undefined) {
-    attributes.unshift("{height}");
-  }
-
-  attributes.push("class={className}");
+  attributes.push("{...rest}");
 
 
   if (attributes.length === 0) {
