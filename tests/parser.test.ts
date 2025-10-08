@@ -1,6 +1,8 @@
 import { describe, it, expect } from "vitest";
 import { parseSvg } from "../src/parser.js";
 import { SvgElement } from "../src/types";
+import fs from "fs";
+import path from "path";
 
 describe("parseSvg", () => {
   it("should parse a simple SVG", () => {
@@ -162,4 +164,15 @@ describe("parseSvg", () => {
       "Invalid SVG: Nested SVG elements are not supported",
     );
   });
+
+  it("test feather activity.svg", () => {
+    const svgPath = path.resolve(__dirname, "data/feather/activity.svg");
+    const svg = fs.readFileSync(svgPath, "utf8");
+
+    expect(() => parseSvg(svg)).not.toThrow();
+    // Optionally, you can add more assertions depending on what parseSvg returns
+    const result = parseSvg(svg);
+    expect(result).toBeDefined();
+  });
 });
+

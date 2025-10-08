@@ -1,4 +1,5 @@
 import { XMLValidator, XMLParser } from "fast-xml-parser";
+import { SvgElement } from "./types";
 
 const parser = new XMLParser({
   ignoreAttributes: false,
@@ -6,13 +7,6 @@ const parser = new XMLParser({
   parseAttributeValue: false, // Keep all attributes as strings
   trimValues: true,
 });
-
-/**
- * Represents a single SVG element with its attributes and potential child elements
- */
-export interface SvgElement {
-  [key: string]: string | SvgElement | SvgElement[];
-}
 
 /**
  * Parses an SVG string and extracts attributes and content
