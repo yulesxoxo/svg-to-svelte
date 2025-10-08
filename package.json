@@ -34,7 +34,7 @@
     "build": "tsc",
     "test": "vitest",
     "prepublishOnly": "npm run build",
-    "prettier-write": "prettier --write \"**/*.{ts,js}\""
+    "prettier": "prettier --write \"**/*.{ts,js}\""
   },
   "devDependencies": {
     "@types/node": "^24.7.0",
