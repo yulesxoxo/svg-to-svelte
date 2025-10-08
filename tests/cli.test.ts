@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
+import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import fs from "fs";
 import path from "path";
 import { execSync } from "child_process";
@@ -172,9 +172,10 @@ describe("CLI", () => {
 
       const result = runCli([emptyDir, testOutputDir]);
 
-      expect(result.exitCode).toBe(0);
-      expect(result.stderr || result.stdout).toContain("No .svg files found");
-    });
+      expect(result.exitCode).toBe(1);
+      expect(result.stderr).toContain("No .svg files found");
+
+    })
 
     it("should report success and error counts", () => {
       const inputDir = path.resolve(__dirname, "data/feather");

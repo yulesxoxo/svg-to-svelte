@@ -13,7 +13,6 @@ function main() {
 
   const [input, outputDir] = args;
 
-  // Check if input exists
   if (!fs.existsSync(input)) {
     console.error(`Error: Input path does not exist: ${input}`);
     process.exit(1);
@@ -22,20 +21,18 @@ function main() {
   const stats = fs.statSync(input);
 
   if (stats.isFile()) {
-    // Single file
     if (!input.endsWith(".svg")) {
       console.error("Error: Input file must be an SVG file (.svg)");
       process.exit(1);
     }
     processSvgFile(input, outputDir);
   } else if (stats.isDirectory()) {
-    // Directory - process all .svg files
     const files = fs.readdirSync(input);
     const svgFiles = files.filter((f) => f.endsWith(".svg"));
 
     if (svgFiles.length === 0) {
-      console.warn(`Warning: No .svg files found in ${input}`);
-      process.exit(0);
+      console.error(`Error: No .svg files found in ${input}`);
+      process.exit(1);
     }
 
     console.log(`Found ${svgFiles.length} SVG file(s)`);
@@ -61,9 +58,9 @@ function main() {
 
     if (errorCount > 0) {
       process.exit(1);
-    }
+  }
   } else {
-    console.error("Error: Input must be a file or directory");
+  console.error("Error: Input must be a file or directory");
     process.exit(1);
   }
 }
@@ -73,16 +70,10 @@ function processSvgFile(inputPath: string, outputDir: string) {
   const outputPath = path.join(outputDir, `${fileName}.svelte`);
 
   console.log(`Processing: ${inputPath}`);
-
-  // Read SVG content
   const svgContent = fs.readFileSync(inputPath, "utf-8");
-
-  // Convert to Svelte
   const svelteComponent = svgToSvelte(svgContent);
 
   fs.mkdirSync(path.dirname(outputPath), { recursive: true });
-
-  // Write output
   fs.writeFileSync(outputPath, svelteComponent, "utf-8");
 
   console.log(`  → ${outputPath}`);
