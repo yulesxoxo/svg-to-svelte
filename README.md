@@ -1,5 +1,7 @@
 # svg-to-svelte
 
+[![codecov](https://codecov.io/gh/yulesxoxo/svg-to-svelte/graph/badge.svg?token=GOIZRX3OQ3)](https://codecov.io/gh/yulesxoxo/svg-to-svelte)
+
 Convert SVG files into Svelte 5 components with a simple command-line interface (CLI).
 
 > Works with Svelte 5 and Node 22+.
