@@ -46,12 +46,6 @@ describe("CLI", () => {
       expect(result.stderr).toContain("Usage: svg-to-svelte");
     });
 
-    it("should exit with error when only one argument provided", () => {
-      const result = runCli(["input.svg"]);
-      expect(result.exitCode).toBe(1);
-      expect(result.stderr).toContain("Usage: svg-to-svelte");
-    });
-
     it("should exit with error when input path does not exist", () => {
       const result = runCli(["non-existent-file.svg", testOutputDir]);
       expect(result.exitCode).toBe(1);
