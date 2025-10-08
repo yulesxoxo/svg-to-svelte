@@ -19,32 +19,45 @@ export function generateSvelteComponent(
 ${propsSection}
 </script>
 
-<svg${svgAttributes}>
+<svg
+${svgAttributes}
+>
 ${children}
 </svg>
 `;
 }
 
+function kebabToCamel(key: string): string {
+  return key.replace(/-([a-z])/g, (_, char) => char.toUpperCase());
+}
+
 function buildPropsSection(svgProps: Record<string, string>): string {
   const propDefaults: string[] = [];
 
-  // Create prop defaults for each SVG property
   for (const [key, value] of Object.entries(svgProps)) {
-    propDefaults.push(`  ${key} = "${value}"`);
+    const varName = /^[a-z][a-zA-Z0-9]*$/.test(key) ? key : kebabToCamel(key);
+    if (varName !== key) {
+      propDefaults.push(`    "${key}": ${varName} = "${value}"`);
+    } else {
+      propDefaults.push(`    ${key} = "${value}"`);
+    }
   }
 
-  // Add rest props
-  propDefaults.push(`  ...rest`);
+  propDefaults.push(`    ...rest`);
 
-  return `  let {\n  ${propDefaults.join(",\n  ")}\n  } = $props();`;
+  return `  let {\n${propDefaults.join(",\n")}\n  } = $props();`;
 }
 
 function getSvgProps(
-    svg: SvgElement,
+  svg: SvgElement,
 ): Record<string, string> {
   const svgProps: Record<string, string> = {};
 
   for (const [key, value] of Object.entries(svg)) {
+    if (key === 'class') {
+      continue;
+    }
+
     if (typeof value === 'string') {
       svgProps[key] = value;
     }
@@ -56,15 +69,16 @@ function getSvgProps(
     if (key === 'desc' && typeof value === 'string' && value.trim() !== '') {
       svgProps['aria-description'] = value.trim();
     }
+  }
 
-    for (const [key, value] of Object.entries(svgProps)) {
-      if (value.trim() === '') {
-        delete svgProps[key];
-      }
+  // Remove empty values
+  for (const key of Object.keys(svgProps)) {
+    if (svgProps[key].trim() === '') {
+      delete svgProps[key];
     }
   }
 
-  return svgProps
+  return svgProps;
 }
 
 function buildSvgAttributes(
@@ -72,36 +86,27 @@ function buildSvgAttributes(
 ): string {
   const attributes: string[] = [];
 
-  for (const [key, value] of Object.entries(svgProps)) {
-    attributes.push(`${key}="${value}"`);
+  for (const [key] of Object.entries(svgProps)) {
+    const varName = /^[a-z][a-zA-Z0-9]*$/.test(key) ? key : kebabToCamel(key);
+    attributes.push(key.includes('-') ? `${key}={${varName}}` : `{${varName}}`);
   }
 
   attributes.push("{...rest}");
 
-
-  if (attributes.length === 0) {
-    return "";
-  }
-
-  return "\n  " + attributes.join("\n  ") + "\n";
+  return "  " + attributes.join("\n  ");
 }
 
 function buildChildren(svg: SvgElement, indent = "  "): string {
   const childElements: string[] = [];
 
   for (const [key, value] of Object.entries(svg)) {
-    // Skip string attributes
-    if (typeof value === "string") {
-      continue;
-    }
+    if (typeof value === "string") continue;
 
-    // Handle array of elements
     if (Array.isArray(value)) {
       for (const item of value) {
         childElements.push(buildElement(key, item, indent));
       }
     } else {
-      // Single element
       childElements.push(buildElement(key, value, indent));
     }
   }
@@ -115,8 +120,6 @@ function buildElement(
   indent: string
 ): string {
   const attributes: string[] = [];
-
-  // Check if element has any child elements
   let hasChildren = false;
 
   for (const [key, value] of Object.entries(element)) {
