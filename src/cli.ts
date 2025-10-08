@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import fs from "fs";
 import path from "path";
-import { svgToSvelte } from "./index";
+import { Options, svgToSvelte } from "./index";
 
 export interface CliResult {
   exitCode: number;
@@ -13,20 +13,18 @@ export function runCli(args: string[]): CliResult {
   let stdout = "";
   let stderr = "";
 
-  const log = (msg: string) => {
-    stdout += msg + "\n";
-  };
+  const log = (msg: string) => { stdout += msg + "\n"; };
+  const error = (msg: string) => { stderr += msg + "\n"; };
 
-  const error = (msg: string) => {
-    stderr += msg + "\n";
-  };
-
-  if (args.length !== 2) {
-    error("Usage: svg-to-svelte <input-dir-or-svg-file> <output-dir>");
+  if (args.length < 2) {
+    error("Usage: svg-to-svelte <input-dir-or-svg-file> <output-dir> [--include-class]");
     return { exitCode: 1, stdout, stderr };
   }
 
-  const [input, outputDir] = args;
+  const input = args[0];
+  const outputDir = args[1];
+
+  const includeClass = args.includes("--include-class");
 
   if (!fs.existsSync(input)) {
     error(`Error: Input path does not exist: ${input}`);
@@ -41,45 +39,36 @@ export function runCli(args: string[]): CliResult {
       return { exitCode: 1, stdout, stderr };
     }
     try {
-      processSvgFile(input, outputDir, log);
+      processSvgFile(input, outputDir, log, { includeClass });
       return { exitCode: 0, stdout, stderr };
     } catch (err) {
       error(`Failed to process ${path.basename(input)}:`);
-      if (err instanceof Error) {
-        error(`  ${err.message}`);
-      }
+      if (err instanceof Error) error(`  ${err.message}`);
       return { exitCode: 1, stdout, stderr };
     }
   } else if (stats.isDirectory()) {
-    const files = fs.readdirSync(input);
-    const svgFiles = files.filter((f) => f.endsWith(".svg"));
-
-    if (svgFiles.length === 0) {
+    const files = fs.readdirSync(input).filter(f => f.endsWith(".svg"));
+    if (files.length === 0) {
       error(`Error: No .svg files found in ${input}`);
       return { exitCode: 1, stdout, stderr };
     }
 
-    log(`Found ${svgFiles.length} SVG file(s)`);
+    log(`Found ${files.length} SVG file(s)`);
 
-    let successCount = 0;
-    let errorCount = 0;
-
-    for (const file of svgFiles) {
+    let successCount = 0, errorCount = 0;
+    for (const file of files) {
       const inputPath = path.join(input, file);
       try {
-        processSvgFile(inputPath, outputDir, log);
+        processSvgFile(inputPath, outputDir, log, { includeClass });
         successCount++;
       } catch (err) {
         errorCount++;
         error(`Failed to process ${file}:`);
-        if (err instanceof Error) {
-          error(`  ${err.message}`);
-        }
+        if (err instanceof Error) error(`  ${err.message}`);
       }
     }
 
     log(`\nComplete: ${successCount} succeeded, ${errorCount} failed`);
-
     return { exitCode: errorCount > 0 ? 1 : 0, stdout, stderr };
   } else {
     error("Error: Input must be a file or directory");
@@ -87,13 +76,19 @@ export function runCli(args: string[]): CliResult {
   }
 }
 
-function processSvgFile(inputPath: string, outputDir: string, log: (msg: string) => void) {
+function processSvgFile(
+  inputPath: string,
+  outputDir: string,
+  log: (msg: string) => void,
+  options: Options
+) {
   const svelteFileName = getSvelteFileName(inputPath);
   const outputPath = path.join(outputDir, svelteFileName);
 
   log(`Processing: ${inputPath}`);
   const svgContent = fs.readFileSync(inputPath, "utf-8");
-  const svelteComponent = svgToSvelte(svgContent);
+
+  const svelteComponent = svgToSvelte(svgContent, options);
 
   fs.mkdirSync(path.dirname(outputPath), { recursive: true });
   fs.writeFileSync(outputPath, svelteComponent, "utf-8");

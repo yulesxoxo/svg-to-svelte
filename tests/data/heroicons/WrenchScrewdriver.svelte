@@ -3,6 +3,7 @@
     fill = "none",
     stroke = "currentColor",
     "stroke-width": strokeWidth = "1.5",
+    class: className = "size-6",
     ...rest
   } = $props();
 </script>
@@ -11,6 +12,7 @@
   {fill}
   {stroke}
   stroke-width={strokeWidth}
+  class={className}
   viewBox="0 0 24 24"
   {...rest}
 >

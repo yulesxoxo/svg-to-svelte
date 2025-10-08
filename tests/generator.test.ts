@@ -178,6 +178,6 @@ describe("generateSvelteComponent", () => {
 
     const result = generateSvelteComponent(svg, {includeClass: true});
     expect(result).toContain('class: className = "size-6"')
-    expect(result).toContain("{className}")
+    expect(result).toContain("class={className}")
   });
 });

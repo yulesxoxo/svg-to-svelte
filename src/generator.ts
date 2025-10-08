@@ -115,7 +115,7 @@ function buildSvgAttributes(svgProps: Record<string, string>): string {
     }
 
     if (key === "class") {
-      attributes.push("{className}");
+      attributes.push("class={className}");
       continue;
     }
 
