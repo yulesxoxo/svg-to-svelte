@@ -26,8 +26,17 @@ ${children}
 }
 
 function buildPropsSection(svgProps: Record<string, string>): string {
-  // TODO
-  return ""
+  const propDefaults: string[] = [];
+
+  // Create prop defaults for each SVG property
+  for (const [key, value] of Object.entries(svgProps)) {
+    propDefaults.push(`  ${key} = "${value}"`);
+  }
+
+  // Add rest props
+  propDefaults.push(`  ...rest`);
+
+  return `  let {\n  ${propDefaults.join(",\n  ")}\n  } = $props();`;
 }
 
 function getSvgProps(
