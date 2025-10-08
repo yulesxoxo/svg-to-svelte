@@ -14,11 +14,11 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      #- name: Set package.json version from tag
-      #  run: |
-      #    TAG_VERSION=${GITHUB_REF#refs/tags/}
-      #    echo "Setting package.json version to $TAG_VERSION"
-      #    npm version $TAG_VERSION --no-git-tag-version
+      - name: Set package.json version from tag
+        run: |
+          TAG_VERSION=${GITHUB_REF#refs/tags/}
+          echo "Setting package.json version to $TAG_VERSION"
+          npm version $TAG_VERSION --no-git-tag-version
 
       # Install dependencies
       - run: npm ci
@@ -28,7 +28,7 @@ jobs:
         with:
           registry-url: 'https://registry.npmjs.org'
 
-      - run: npm publish --provenance
+      - run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
