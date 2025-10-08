@@ -52,7 +52,7 @@ export function parseSvg(svgContent: string): SvgElement {
 
 function validate(svg: SvgElement) {
   validateSvgHasChildElements(svg);
-  validateNoNestedSvgs(svg);
+  validateSvgChildElements(svg);
 }
 
 function validateSvgHasChildElements(svg: SvgElement) {
@@ -65,21 +65,29 @@ function validateSvgHasChildElements(svg: SvgElement) {
   throw new Error("Invalid SVG: SVG has no child elements found");
 }
 
-function validateNoNestedSvgs(svg: SvgElement) {
+function validateSvgChildElements(svg: SvgElement) {
   for (const [key, value] of Object.entries(svg)) {
     if (key === "svg") {
       throw new Error("Invalid SVG: Nested SVG elements are not supported");
+    }
+
+    if (key === "image") {
+      throw new Error("Invalid SVG: Image elements are not supported");
+    }
+
+    if (key === "style") {
+      throw new Error("Invalid SVG: Style elements are not supported");
     }
 
     if (typeof value === "object") {
       if (Array.isArray(value)) {
         for (const item of value) {
           if (typeof item === "object") {
-            validateNoNestedSvgs(item);
+            validateSvgChildElements(item);
           }
         }
       } else {
-        validateNoNestedSvgs(value);
+        validateSvgChildElements(value);
       }
     }
   }

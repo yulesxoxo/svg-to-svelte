@@ -165,6 +165,82 @@ describe("parseSvg", () => {
     );
   });
 
+  it("should throw error for image elements", () => {
+    const svg = `
+    <svg width="100" height="100">
+        <image href="test.png" x="0" y="0" width="100" height="100"/>
+    </svg>`;
+
+    expect(() => parseSvg(svg)).toThrow(
+      "Invalid SVG: Image elements are not supported",
+    );
+  });
+
+  it("should throw error for image elements with xlink:href", () => {
+    const svg = `
+    <svg width="100" height="100" xmlns:xlink="http://www.w3.org/1999/xlink">
+        <image xlink:href="test.png" x="0" y="0" width="100" height="100"/>
+    </svg>`;
+
+    expect(() => parseSvg(svg)).toThrow(
+      "Invalid SVG: Image elements are not supported",
+    );
+  });
+
+  it("should throw error for nested image elements", () => {
+    const svg = `
+    <svg width="100" height="100">
+        <g>
+            <image href="test.png" x="0" y="0" width="50" height="50"/>
+        </g>
+    </svg>`;
+
+    expect(() => parseSvg(svg)).toThrow(
+      "Invalid SVG: Image elements are not supported",
+    );
+  });
+
+  it("should throw error for style elements", () => {
+    const svg = `
+    <svg width="100" height="100">
+        <style>
+            .red { fill: red; }
+        </style>
+        <circle class="red" cx="50" cy="50" r="40"/>
+    </svg>`;
+
+    expect(() => parseSvg(svg)).toThrow(
+      "Invalid SVG: Style elements are not supported",
+    );
+  });
+
+  it("should throw error for nested style elements", () => {
+    const svg = `
+    <svg width="100" height="100">
+        <defs>
+            <style>
+                .blue { fill: blue; }
+            </style>
+        </defs>
+        <circle class="blue" cx="50" cy="50" r="40"/>
+    </svg>`;
+
+    expect(() => parseSvg(svg)).toThrow(
+      "Invalid SVG: Style elements are not supported",
+    );
+  });
+
+  it("should throw error for style attributes", () => {
+    const svg = `
+    <svg width="100" height="100" style="accent-color: aliceblue">
+        <circle class="blue" cx="50" cy="50" r="40"/>
+    </svg>`;
+
+    expect(() => parseSvg(svg)).toThrow(
+      "Invalid SVG: Style elements are not supported",
+    );
+  });
+
   it("test feather activity.svg", () => {
     const svgPath = path.resolve(__dirname, "data/feather/activity.svg");
     const svg = fs.readFileSync(svgPath, "utf8");
@@ -175,4 +251,3 @@ describe("parseSvg", () => {
     expect(result).toBeDefined();
   });
 });
-
