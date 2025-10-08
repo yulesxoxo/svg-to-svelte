@@ -54,16 +54,26 @@ function getSvgProps(svg: SvgElement): Record<string, string> {
       continue;
     }
 
+    function setAriaAttribute(attr: string, value: string | SvgElement | SvgElement[]) {
+      if (typeof value === "string" && value.trim() !== "") {
+        svgProps[attr] = value.trim();
+      } else if (typeof value === "object" && value !== null && "#text" in value && typeof value["#text"] === "string") {
+        svgProps[attr] = value["#text"];
+      }
+    }
+
+    if (key === "title") {
+      setAriaAttribute("aria-label", value);
+      continue;
+    }
+
+    if (key === "desc") {
+      setAriaAttribute("aria-description", value);
+      continue;
+    }
+
     if (typeof value === "string") {
       svgProps[key] = value;
-    }
-
-    if (key === "title" && typeof value === "string" && value.trim() !== "") {
-      svgProps["aria-label"] = value.trim();
-    }
-
-    if (key === "desc" && typeof value === "string" && value.trim() !== "") {
-      svgProps["aria-description"] = value.trim();
     }
   }
 
@@ -76,6 +86,7 @@ function getSvgProps(svg: SvgElement): Record<string, string> {
 
   return svgProps;
 }
+
 
 function buildSvgAttributes(svgProps: Record<string, string>): string {
   const attributes: string[] = [];
@@ -95,6 +106,9 @@ function buildChildren(svg: SvgElement, indent = "  "): string {
 
   for (const [key, value] of Object.entries(svg)) {
     if (typeof value === "string") continue;
+    if (key === "title" || key === "desc") {
+      continue;
+    }
 
     if (Array.isArray(value)) {
       for (const item of value) {

@@ -19,17 +19,6 @@ function main() {
     process.exit(1);
   }
 
-  // Create output directory if it doesn't exist
-  try {
-    fs.mkdirSync(outputDir, { recursive: true });
-  } catch (error) {
-    console.error(`Error: Failed to create output directory: ${outputDir}`);
-    if (error instanceof Error) {
-      console.error(error.message);
-    }
-    process.exit(1);
-  }
-
   const stats = fs.statSync(input);
 
   if (stats.isFile()) {
@@ -90,6 +79,8 @@ function processSvgFile(inputPath: string, outputDir: string) {
 
   // Convert to Svelte
   const svelteComponent = svgToSvelte(svgContent);
+
+  fs.mkdirSync(path.dirname(outputPath), { recursive: true });
 
   // Write output
   fs.writeFileSync(outputPath, svelteComponent, "utf-8");

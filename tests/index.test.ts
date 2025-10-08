@@ -4,7 +4,7 @@ import fs from "fs";
 import { svgToSvelte } from "../src";
 
 describe("svgToSvelte", () => {
-  const svgSvelteMap = {
+  const featherSvgSvelteMap = {
     "activity.svg": "Activity.svelte",
     "dribbble.svg": "Dribbble.svelte",
     "git-branch.svg": "GitBranch.svelte",
@@ -13,8 +13,8 @@ describe("svgToSvelte", () => {
     "slack.svg": "Slack.svelte",
   };
 
-  Object.entries(svgSvelteMap).forEach(([svgFile, svelteFile]) => {
-    it(`should convert ${svgFile} to ${svelteFile} component`, () => {
+  Object.entries(featherSvgSvelteMap).forEach(([svgFile, svelteFile]) => {
+    it(`should convert feather ${svgFile} to ${svelteFile} component`, () => {
       const svgPath = path.resolve(__dirname, `data/feather/${svgFile}`);
       const svg = fs.readFileSync(svgPath, "utf8");
       const result = svgToSvelte(svg);
@@ -22,6 +22,27 @@ describe("svgToSvelte", () => {
       const svelteComponentPath = path.resolve(
         __dirname,
         `data/feather/${svelteFile}`,
+      );
+      const svelteComponent = fs.readFileSync(svelteComponentPath, "utf8");
+
+      expect(result.split(/\r?\n/)).toEqual(svelteComponent.split(/\r?\n/));
+    });
+  });
+
+  const customSvgSvelteMap = {
+    "square.svg": "Square.svelte",
+    "group.svg": "Group.svelte",
+  };
+
+  Object.entries(customSvgSvelteMap).forEach(([svgFile, svelteFile]) => {
+    it(`should convert custom ${svgFile} to ${svelteFile} component`, () => {
+      const svgPath = path.resolve(__dirname, `data/custom/${svgFile}`);
+      const svg = fs.readFileSync(svgPath, "utf8");
+      const result = svgToSvelte(svg);
+
+      const svelteComponentPath = path.resolve(
+        __dirname,
+        `data/custom/${svelteFile}`,
       );
       const svelteComponent = fs.readFileSync(svelteComponentPath, "utf8");
 
