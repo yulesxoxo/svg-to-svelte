@@ -7,7 +7,6 @@
     "stroke-linecap": strokeLinecap = "round",
     "stroke-linejoin": strokeLinejoin = "round",
     "stroke-width": strokeWidth = "2",
-    viewBox = "0 0 24 24",
     ...rest
   } = $props();
 </script>
@@ -20,7 +19,7 @@
   stroke-linecap={strokeLinecap}
   stroke-linejoin={strokeLinejoin}
   stroke-width={strokeWidth}
-  {viewBox}
+  viewBox="0 0 24 24"
   {...rest}
 >
   <path d="M1 1 23 23M9 9v3a3 3 0 0 0 5.12 2.12M15 9.34V4a3 3 0 0 0-5.94-.6" />

@@ -88,8 +88,8 @@ export function runCli(args: string[]): CliResult {
 }
 
 function processSvgFile(inputPath: string, outputDir: string, log: (msg: string) => void) {
-  const fileName = path.basename(inputPath, ".svg");
-  const outputPath = path.join(outputDir, `${fileName}.svelte`);
+  const svelteFileName = getSvelteFileName(inputPath);
+  const outputPath = path.join(outputDir, svelteFileName);
 
   log(`Processing: ${inputPath}`);
   const svgContent = fs.readFileSync(inputPath, "utf-8");
@@ -100,6 +100,35 @@ function processSvgFile(inputPath: string, outputDir: string, log: (msg: string)
 
   log(`  → ${outputPath}`);
 }
+
+/**
+ * Generates the .svelte component file name for an SVG file.
+ * Example: "arrow-left.svg" → "ArrowLeft.svelte"
+ */
+export function getSvelteFileName(inputPath: string): string {
+  const baseName = path.basename(inputPath, ".svg");
+  return `${toPascalCase(baseName)}.svelte`;
+}
+
+/**
+ * Converts a string like:
+ * - "icon-name" → "IconName"
+ * - "icon_name" → "IconName"
+ * - "iconName" → "IconName"
+ */
+export function toPascalCase(name: string): string {
+  return name
+    // replace separators with spaces
+    .replace(/[-_]/g, " ")
+    // add space before uppercase letters (camelCase support)
+    .replace(/([a-z])([A-Z])/g, "$1 $2")
+    // split by spaces, capitalize and join
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join("");
+}
+
 
 // Only run main when executed directly (not when imported)
 if (require.main === module) {

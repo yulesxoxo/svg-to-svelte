@@ -1,5 +1,11 @@
 import { SvgElement } from "./types";
 
+const nonEditableProperties = [
+  "class",
+  "viewBox",
+  "preserveAspectRatio",
+]
+
 /**
  * Generates a Svelte component from a parsed SVG element
  */
@@ -33,6 +39,9 @@ function buildPropsSection(svgProps: Record<string, string>): string {
   const propDefaults: string[] = [];
 
   for (const [key, value] of Object.entries(svgProps)) {
+    if (nonEditableProperties.includes(key)) {
+      continue;
+    }
     const varName = /^[a-z][a-zA-Z0-9]*$/.test(key) ? key : kebabToCamel(key);
     if (varName !== key) {
       propDefaults.push(`    "${key}": ${varName} = "${value}"`);
@@ -91,9 +100,13 @@ function getSvgProps(svg: SvgElement): Record<string, string> {
 function buildSvgAttributes(svgProps: Record<string, string>): string {
   const attributes: string[] = [];
 
-  for (const [key] of Object.entries(svgProps)) {
-    const varName = /^[a-z][a-zA-Z0-9]*$/.test(key) ? key : kebabToCamel(key);
-    attributes.push(key.includes("-") ? `${key}={${varName}}` : `{${varName}}`);
+  for (const [key, value] of Object.entries(svgProps)) {
+    if (nonEditableProperties.includes(key)) {
+      attributes.push(`${key}="${value}"`);
+    } else {
+      const varName = /^[a-z][a-zA-Z0-9]*$/.test(key) ? key : kebabToCamel(key);
+      attributes.push(key.includes("-") ? `${key}={${varName}}` : `{${varName}}`);
+    }
   }
 
   attributes.push("{...rest}");

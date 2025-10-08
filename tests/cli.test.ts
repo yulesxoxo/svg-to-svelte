@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import fs from "fs";
 import path from "path";
 import { execSync } from "child_process";
-import { runCli } from "../src/cli";
+import { getSvelteFileName, runCli, toPascalCase } from "../src/cli";
 
 describe("CLI", () => {
   const testOutputDir = path.resolve(__dirname, "temp-output");
@@ -138,12 +138,12 @@ describe("CLI", () => {
 
       // Check that output files were created
       const expectedFiles = [
-        "activity.svelte",
-        "dribbble.svelte",
-        "git-branch.svelte",
-        "mic-off.svelte",
-        "more-horizontal.svelte",
-        "slack.svelte",
+        "Activity.svelte",
+        "Dribbble.svelte",
+        "GitBranch.svelte",
+        "MicOff.svelte",
+        "MoreHorizontal.svelte",
+        "Slack.svelte",
       ];
 
       expectedFiles.forEach((file) => {
@@ -194,9 +194,9 @@ describe("CLI", () => {
       expect(result.exitCode).toBe(0);
 
       const testFiles = {
-        "activity.svelte": "Activity.svelte",
-        "dribbble.svelte": "Dribbble.svelte",
-        "git-branch.svelte": "GitBranch.svelte",
+        "Activity.svelte": "Activity.svelte",
+        "Dribbble.svelte": "Dribbble.svelte",
+        "GitBranch.svelte": "GitBranch.svelte",
       };
 
       Object.entries(testFiles).forEach(([outputFile, expectedFile]) => {
@@ -256,6 +256,28 @@ describe("CLI", () => {
 
       expect(result.exitCode).toBe(1);
       expect(result.stderr).toContain("Input path does not exist");
+    });
+  });
+
+  describe("toPascalCase", () => {
+    it.each([
+      ["arrow-left", "ArrowLeft"],
+      ["arrow_left", "ArrowLeft"],
+      ["arrowLeft", "ArrowLeft"],
+      ["ArrowLeft", "ArrowLeft"],
+      ["multi_part-icon_name", "MultiPartIconName"],
+    ])("converts %s → %s", (input, expected) => {
+      expect(toPascalCase(input)).toBe(expected);
+    });
+  });
+
+  describe("getSvelteFileName", () => {
+    it.each([
+      ["arrow-left.svg", "ArrowLeft.svelte"],
+      ["icon_name.svg", "IconName.svelte"],
+      ["arrowLeft.svg", "ArrowLeft.svelte"],
+    ])("generates correct Svelte filename for %s", (input, expected) => {
+      expect(getSvelteFileName(input)).toBe(expected);
     });
   });
 });
