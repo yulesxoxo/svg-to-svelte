@@ -49,9 +49,7 @@ const DEFAULT_SVGO_CONFIG: Config = {
 /**
  * Preprocesses an SVG string using SVGO to optimize and clean it up
  */
-export function preprocessSvg(
-  svgContent: string,
-): string {
+export function preprocessSvg(svgContent: string): string {
   try {
     const result = optimize(svgContent, DEFAULT_SVGO_CONFIG);
     return result.data;

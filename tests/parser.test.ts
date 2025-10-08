@@ -129,6 +129,12 @@ describe("parseSvg", () => {
     expect(() => parseSvg(svg2)).toThrow("Invalid SVG: No SVG element found");
   });
 
+  it("should throw error for SVG without children", () => {
+    const svg = "<svg class='hello world'></svg>";
+
+    expect(() => parseSvg(svg)).toThrow("Invalid SVG: SVG has no child elements found");
+  });
+
   it("should throw error for multiple SVGs in single file", () => {
     const svg = `
     <svg width="24" height="24">

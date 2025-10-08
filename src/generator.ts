@@ -3,9 +3,7 @@ import { SvgElement } from "./types";
 /**
  * Generates a Svelte component from a parsed SVG element
  */
-export function generateSvelteComponent(
-  svg: SvgElement,
-): string {
+export function generateSvelteComponent(svg: SvgElement): string {
   const svgProps = getSvgProps(svg);
 
   const propsSection = buildPropsSection(svgProps);
@@ -48,32 +46,30 @@ function buildPropsSection(svgProps: Record<string, string>): string {
   return `  let {\n${propDefaults.join(",\n")}\n  } = $props();`;
 }
 
-function getSvgProps(
-  svg: SvgElement,
-): Record<string, string> {
+function getSvgProps(svg: SvgElement): Record<string, string> {
   const svgProps: Record<string, string> = {};
 
   for (const [key, value] of Object.entries(svg)) {
-    if (key === 'class') {
+    if (key === "class") {
       continue;
     }
 
-    if (typeof value === 'string') {
+    if (typeof value === "string") {
       svgProps[key] = value;
     }
 
-    if (key === 'title' && typeof value === 'string' && value.trim() !== '') {
-      svgProps['aria-label'] = value.trim();
+    if (key === "title" && typeof value === "string" && value.trim() !== "") {
+      svgProps["aria-label"] = value.trim();
     }
 
-    if (key === 'desc' && typeof value === 'string' && value.trim() !== '') {
-      svgProps['aria-description'] = value.trim();
+    if (key === "desc" && typeof value === "string" && value.trim() !== "") {
+      svgProps["aria-description"] = value.trim();
     }
   }
 
   // Remove empty values
   for (const key of Object.keys(svgProps)) {
-    if (svgProps[key].trim() === '') {
+    if (svgProps[key].trim() === "") {
       delete svgProps[key];
     }
   }
@@ -81,14 +77,12 @@ function getSvgProps(
   return svgProps;
 }
 
-function buildSvgAttributes(
-  svgProps: Record<string, string>
-): string {
+function buildSvgAttributes(svgProps: Record<string, string>): string {
   const attributes: string[] = [];
 
   for (const [key] of Object.entries(svgProps)) {
     const varName = /^[a-z][a-zA-Z0-9]*$/.test(key) ? key : kebabToCamel(key);
-    attributes.push(key.includes('-') ? `${key}={${varName}}` : `{${varName}}`);
+    attributes.push(key.includes("-") ? `${key}={${varName}}` : `{${varName}}`);
   }
 
   attributes.push("{...rest}");
@@ -117,7 +111,7 @@ function buildChildren(svg: SvgElement, indent = "  "): string {
 function buildElement(
   tagName: string,
   element: SvgElement,
-  indent: string
+  indent: string,
 ): string {
   const attributes: string[] = [];
   let hasChildren = false;

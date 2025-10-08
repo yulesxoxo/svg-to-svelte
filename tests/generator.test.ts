@@ -16,13 +16,16 @@ describe("generateSvelteComponent", () => {
       "stroke-width": "2",
       viewBox: "0 0 24 24",
       path: {
-        d: "M22 12 18 12 15 21 9 3 6 12 2 12"
+        d: "M22 12 18 12 15 21 9 3 6 12 2 12",
       },
     };
 
     const result = generateSvelteComponent(svg);
 
-    const svelteComponentPath = path.resolve(__dirname, "data/feather/activity.svelte");
+    const svelteComponentPath = path.resolve(
+      __dirname,
+      "data/feather/Activity.svelte",
+    );
     const svelteComponent = fs.readFileSync(svelteComponentPath, "utf8");
     // workaround for windows line-endings
     expect(result.split(/\r?\n/)).toEqual(svelteComponent.split(/\r?\n/));

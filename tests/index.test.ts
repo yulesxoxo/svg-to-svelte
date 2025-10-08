@@ -4,15 +4,28 @@ import fs from "fs";
 import { svgToSvelte } from "../src";
 
 describe("svgToSvelte", () => {
-  it("should convert .svg to .svelte component", () => {
+  const svgSvelteMap = {
+    "activity.svg": "Activity.svelte",
+    "dribbble.svg": "Dribbble.svelte",
+    "git-branch.svg": "GitBranch.svelte",
+    "mic-off.svg": "MicOff.svelte",
+    "more-horizontal.svg": "MoreHorizontal.svelte",
+    "slack.svg": "Slack.svelte",
+  };
 
-    const svgPath = path.resolve(__dirname, "data/feather/activity.svg");
-    const svg =  fs.readFileSync(svgPath, "utf8");
-    const svelteComponentPath = path.resolve(__dirname, "data/feather/activity.svelte");
-    const svelteComponent = fs.readFileSync(svelteComponentPath, "utf8");
+  Object.entries(svgSvelteMap).forEach(([svgFile, svelteFile]) => {
+    it(`should convert ${svgFile} to ${svelteFile} component`, () => {
+      const svgPath = path.resolve(__dirname, `data/feather/${svgFile}`);
+      const svg = fs.readFileSync(svgPath, "utf8");
+      const result = svgToSvelte(svg);
 
-    const result = svgToSvelte(svg);
+      const svelteComponentPath = path.resolve(
+        __dirname,
+        `data/feather/${svelteFile}`,
+      );
+      const svelteComponent = fs.readFileSync(svelteComponentPath, "utf8");
 
-    expect(result.split(/\r?\n/)).toEqual(svelteComponent.split(/\r?\n/));
+      expect(result.split(/\r?\n/)).toEqual(svelteComponent.split(/\r?\n/));
+    });
   });
 });
