@@ -2,13 +2,14 @@ import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import fs from "fs";
 import path from "path";
 import { execSync } from "child_process";
+import { runCli } from "../src/cli";
 
 describe("CLI", () => {
   const testOutputDir = path.resolve(__dirname, "temp-output");
   const cliPath = path.resolve(__dirname, "../src/cli.ts");
 
-  // Helper to run CLI command
-  const runCli = (args: string[]) => {
+  // Helper to run CLI command via npx (for integration tests)
+  const runCliIntegration = (args: string[]) => {
     try {
       const result = execSync(
         `npx tsx ${cliPath} ${args.join(" ")}`,
@@ -174,8 +175,7 @@ describe("CLI", () => {
 
       expect(result.exitCode).toBe(1);
       expect(result.stderr).toContain("No .svg files found");
-
-    })
+    });
 
     it("should report success and error counts", () => {
       const inputDir = path.resolve(__dirname, "data/feather");
@@ -236,6 +236,26 @@ describe("CLI", () => {
 
         expect(output.split(/\r?\n/)).toEqual(expected.split(/\r?\n/));
       });
+    });
+  });
+
+  describe("integration tests (via npx tsx)", () => {
+    it("should work when called via npx tsx - success case", () => {
+      const inputPath = path.resolve(__dirname, "data/feather/activity.svg");
+      const result = runCliIntegration([inputPath, testOutputDir]);
+
+      expect(result.exitCode).toBe(0);
+      expect(result.stdout).toContain("Processing:");
+
+      const outputPath = path.join(testOutputDir, "activity.svelte");
+      expect(fs.existsSync(outputPath)).toBe(true);
+    });
+
+    it("should work when called via npx tsx - failure case", () => {
+      const result = runCliIntegration(["non-existent.svg", testOutputDir]);
+
+      expect(result.exitCode).toBe(1);
+      expect(result.stderr).toContain("Input path does not exist");
     });
   });
 });
