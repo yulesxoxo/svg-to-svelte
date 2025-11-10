@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import path from "path";
 import fs from "fs";
-import { svgToSvelte } from "../src";
+import { svgToSvelte } from "../src/index.js";
 
 describe("svgToSvelte", () => {
   const featherSvgSvelteMap = {
