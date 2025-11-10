@@ -30,9 +30,7 @@ jobs:
         with:
           registry-url: 'https://registry.npmjs.org'
 
-      - run: npm publish --provenance --access public
-        env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - run: npm publish --access public
 
       - uses: actions/setup-node@v5
         with:
