@@ -62,7 +62,9 @@ export function runCli(args: string[]): CliResult {
       if (err instanceof Error) error(`  ${err.message}`);
       return { exitCode: 1, stdout, stderr };
     }
-  } else if (stats.isDirectory()) {
+  }
+
+  if (stats.isDirectory()) {
     const files = fs.readdirSync(input).filter((f) => f.endsWith(".svg"));
     if (files.length === 0) {
       error(`Error: No .svg files found in ${input}`);
@@ -87,10 +89,10 @@ export function runCli(args: string[]): CliResult {
 
     log(`\nComplete: ${successCount} succeeded, ${errorCount} failed`);
     return { exitCode: errorCount > 0 ? 1 : 0, stdout, stderr };
-  } else {
-    error("Error: Input must be a file or directory");
-    return { exitCode: 1, stdout, stderr };
   }
+
+  error("Error: Input must be a file or directory");
+  return { exitCode: 1, stdout, stderr };
 }
 
 function processSvgFile(
