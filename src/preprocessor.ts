@@ -10,7 +10,7 @@ const DEFAULT_SVGO_CONFIG: Config = {
     "convertColors",
     "convertEllipseToCircle",
     "convertOneStopGradients",
-    "convertPathData",
+    // "convertPathData",
     "convertShapeToPath",
     "convertStyleToAttrs",
     "convertTransform",

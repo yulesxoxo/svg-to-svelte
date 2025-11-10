@@ -2,8 +2,7 @@ import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import fs from "fs";
 import path from "path";
 import { execSync } from "child_process";
-import { getSvelteFileName, runCli, toPascalCase } from "../src/cli";
-
+import { getSvelteFileName, runCli, toPascalCase } from "../src/cli.js";
 describe("CLI", () => {
   const testOutputDir = path.resolve(__dirname, "temp-output");
   const cliPath = path.resolve(__dirname, "../src/cli.ts");
@@ -274,4 +273,13 @@ describe("CLI", () => {
       expect(getSvelteFileName(input)).toBe(expected);
     });
   });
+
+  it("test heroicons/24/outline/slash.svg", () => {
+    // This SVG used to fail because SVGO "convertPathData" removes elements that are required
+    // for the icon to render correctly. We run it here to make sure the CLI handles it.
+    const svgPath = path.resolve(__dirname, "data/heroicons/24/outline/slash.svg");
+    const result =  runCli([svgPath, testOutputDir]);
+    expect(result).toBeDefined();
+    expect(result.stderr).toEqual("");
+  })
 });
