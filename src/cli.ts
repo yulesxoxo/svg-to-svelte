@@ -4,6 +4,7 @@ import path from "path";
 import { Options, svgToSvelte } from "./index.js";
 import { fileURLToPath } from 'node:url';
 import { argv } from 'node:process';
+import { globSync } from 'glob';
 
 
 export interface CliResult {
@@ -62,8 +63,14 @@ export function runCli(args: string[]): CliResult {
       if (err instanceof Error) error(`  ${err.message}`);
       return { exitCode: 1, stdout, stderr };
     }
-  } else if (stats.isDirectory()) {
-    const files = fs.readdirSync(input).filter((f) => f.endsWith(".svg"));
+  }
+
+  if (stats.isDirectory()) {
+    const files = globSync('**/*.svg', {
+      cwd: input,
+      nodir: true
+    });
+
     if (files.length === 0) {
       error(`Error: No .svg files found in ${input}`);
       return { exitCode: 1, stdout, stderr };
@@ -75,8 +82,11 @@ export function runCli(args: string[]): CliResult {
       errorCount = 0;
     for (const file of files) {
       const inputPath = path.join(input, file);
+      const relativeDir = path.dirname(file);
+      const fileOutputDir = path.join(outputDir, relativeDir);
+
       try {
-        processSvgFile(inputPath, outputDir, log, { includeClass });
+        processSvgFile(inputPath, fileOutputDir, log, { includeClass });
         successCount++;
       } catch (err) {
         errorCount++;
@@ -87,10 +97,10 @@ export function runCli(args: string[]): CliResult {
 
     log(`\nComplete: ${successCount} succeeded, ${errorCount} failed`);
     return { exitCode: errorCount > 0 ? 1 : 0, stdout, stderr };
-  } else {
-    error("Error: Input must be a file or directory");
-    return { exitCode: 1, stdout, stderr };
   }
+
+  error("Error: Input must be a file or directory");
+  return { exitCode: 1, stdout, stderr };
 }
 
 function processSvgFile(

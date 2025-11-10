@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { parseSvg } from "../src/parser.js";
-import { SvgElement } from "../src/types";
+import { SvgElement } from "../src/types.js";
 import fs from "fs";
 import path from "path";
 
@@ -254,8 +254,15 @@ describe("parseSvg", () => {
     const svg = fs.readFileSync(svgPath, "utf8");
 
     expect(() => parseSvg(svg)).not.toThrow();
-    // Optionally, you can add more assertions depending on what parseSvg returns
     const result = parseSvg(svg);
     expect(result).toBeDefined();
   });
+
+  it("test heroicons/24/outline/slash.svg", () => {
+    const svgPath = path.resolve(__dirname, "data/heroicons/24/outline/slash.svg");
+    const svg = fs.readFileSync(svgPath, "utf8");
+    expect(() => parseSvg(svg)).not.toThrow();
+    const result = parseSvg(svg);
+    expect(result).toBeDefined();
+  })
 });

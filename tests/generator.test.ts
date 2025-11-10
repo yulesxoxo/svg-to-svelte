@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { generateSvelteComponent } from "../src/generator.js";
-import { SvgElement } from "../src/types";
+import { SvgElement } from "../src/types.js";
 import path from "path";
 import fs from "fs";
 
